@@ -24,16 +24,16 @@ class UserController{
 
       if(isset($userService['error'])){
          return $response::json([
-            'error' => true, 
+            'error'   => true, 
             'success' => false,
-            'data' => $userService['error']
-         ]);
+            'data'    => $userService['error']
+         ],$userService['code']);
       }
 
       $response::json([
-         'error' => false, 
-         'success' => true,
-         'data' => $userService
+         'error'  => false, 
+         'success'=> true,
+         'data'   => $userService
       ], 201);
    }
 
