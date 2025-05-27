@@ -2,7 +2,9 @@
 
 namespace App\Services;
 
-use App\Models\UserModel;
+use App\Http\JWT;
+use App\Models\UserModels\UserCreateModel;
+use App\Models\UserModels\UserAuthModel;
 use App\Utils\Validator;
 use App\Repositories\UserRepository;
 use App\Utils\DatabaseErrorMessage;
@@ -20,7 +22,7 @@ class UserServices{
       try{
          $userReopsitory = new UserRepository();
 
-         $userModel = new UserModel($data);
+         $userModel = new UserCreateModel($data);
          $fields = Validator::validate($userModel->toArray());
 
          $fields['password'] =  password_hash($data['password'], PASSWORD_DEFAULT);
@@ -33,7 +35,47 @@ class UserServices{
       }catch(\PDOException $e){
          return  DatabaseErrorMessage::getMessageBasedOnError($e->errorInfo[0]);
       }catch(\Exception $e){
-         return ['error' => $e->getMessage()];
+         return ['error' => $e->getMessage(), 'code' => 500];
+      }
+   }
+
+   public static function login(array $data){
+      try{
+         $userReopsitory = new UserRepository();
+
+         $userModel = new UserAuthModel($data);
+         $fields = Validator::validate($userModel->toArray());
+
+         $user = $userReopsitory->auth($fields);
+
+         if(!$user) return ['error' => 'Email or password is incorrect.', 'code' => 400];
+
+         return JWT::generete($user);
+
+      }catch(\PDOException $e){
+         return  DatabaseErrorMessage::getMessageBasedOnError($e->errorInfo[0]);
+      }catch(\Exception $e){
+         return ['error' => $e->getMessage(), 'code' => 500];
+      }
+   }
+
+   public static function fetch(mixed $authorization){
+
+      try{
+         if(isset($authorization['error'])){
+            return ['error' => $authorization['error'], 'code' => 400];
+         }
+
+         $userFromJWT = JWT::verify($authorization);
+
+         if(!$userFromJWT) return ['error' => 'Please login to continue', 'code' => 401];
+
+         return $userFromJWT;
+
+      }catch(\PDOException $e){
+         return  DatabaseErrorMessage::getMessageBasedOnError($e->errorInfo[0]);
+      }catch(\Exception $e){
+         return ['error' => $e->getMessage(), 'code' => 500];
       }
    }
 }

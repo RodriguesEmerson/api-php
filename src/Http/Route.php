@@ -21,7 +21,7 @@ class Route{
       ];
    }
 
-    public static function put(string $path, string $action){
+   public static function put(string $path, string $action){
       self::$routes[] = [
          'path' => $path,
          'action' => $action,

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Models;
+namespace App\Models\UserModels;
 
 /**
  * UserModel pega e formata os dados enviados;
@@ -9,7 +9,7 @@ namespace App\Models;
  *    @return array: Retorna os dados formatados;
  */
 
-class UserModel{
+class UserCreateModel{
    public string $id;
    public string $name;
    public string $lastname;
@@ -28,7 +28,7 @@ class UserModel{
       $this->start_date = trim($data['start_date']       ?? '');
    }
 
-   public function toArray(): array {
+   public function toArray():array {
       return [
          'id'          => $this->id,
          'name'        => $this->name,
@@ -38,5 +38,5 @@ class UserModel{
          'image'       => $this->image,
          'start_date'  => $this->start_date,
       ];
-}
+   }
 }

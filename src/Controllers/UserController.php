@@ -38,11 +38,43 @@ class UserController{
    }
 
    public function login(Request $request, Response $response){
+      $body = $request::body();
 
+      $userService = UserServices::login($body);
+
+      if(isset($userService['error'])){
+         return $response::json([
+            'error'   => true, 
+            'success' => false,
+            'data'    => $userService['error']
+         ],$userService['code']);
+      }
+
+      $response::json([
+         'error'  => false, 
+         'success'=> true,
+         'jwt'   => $userService
+      ], 200);
    }
 
    public function fetch(Request $request, Response $response){
+      $authorization = $request::authorization();
 
+      $userService = UserServices::fetch($authorization);
+
+      if(isset($userService['error'])){
+         return $response::json([
+            'error'   => true, 
+            'success' => false,
+            'data'    => $userService['error']
+         ],$userService['code']);
+      }
+
+      $response::json([
+         'error'  => false, 
+         'success'=> true,
+         'jwt'   => $userService
+      ], 200);
    }
 
    public function update(Request $request, Response $response){

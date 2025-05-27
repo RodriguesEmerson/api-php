@@ -2,7 +2,7 @@
 API em PHP puro criada para fins de estudos.
 
  **Tecnologias Usadas**  
-|-PHP 8.2
+|-PHP 8.2  
 |-XAMPP  
 
  **Como Rodar**  
