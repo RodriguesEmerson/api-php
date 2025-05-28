@@ -52,8 +52,26 @@ class UserRepository extends BaseRepository {
       ];
    }
 
-   public function fetch(){
-      
+   public function find(string $id){
+      $stmt = $this->pdo->prepare(
+         'SELECT `id`, `name`, `email` FROM `users` WHERE `id` = ?'
+      );
+      $stmt->execute([$id]);
+      return $stmt->fetch(\PDO::FETCH_ASSOC);
+   }
+
+   public function update(int|string $id, string $name){
+      $stmt = $this->pdo->prepare(
+         'UPDATE `users` set `name` = :name WHERE `id` = :id'
+      );
+      return $stmt->execute([':id' => $id, ':name' => $name]);
+   }
+
+   public function delete(int|string $id){
+      $stmt =  $this->pdo->prepare(
+         'DELETE FROM `users` WHERE `id` = :id'
+      );
+      return $stmt->execute([':id' => $id]);
    }
    
 }

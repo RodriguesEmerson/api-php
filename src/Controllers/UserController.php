@@ -3,6 +3,7 @@
 namespace App\Controllers;
 Use App\Http\Request;
 Use App\Http\Response;
+use App\Middleware\Authorization;
 Use App\Services\UserServices;
 
 
@@ -19,22 +20,14 @@ class UserController{
    public function store(Request $request, Response $response){
       $body = $request::body();
 
-      //O Userservices cuidará das regras de negócios;
+      //Userservices cuidará das regras de negócios;
       $userService = UserServices::create($body);
 
       if(isset($userService['error'])){
-         return $response::json([
-            'error'   => true, 
-            'success' => false,
-            'data'    => $userService['error']
-         ],$userService['code']);
+        return $response::json($userService['error'], $userService['code'], 'error');
       }
 
-      $response::json([
-         'error'  => false, 
-         'success'=> true,
-         'data'   => $userService
-      ], 201);
+      $response::json($userService, 200, 'success');
    }
 
    public function login(Request $request, Response $response){
@@ -43,38 +36,25 @@ class UserController{
       $userService = UserServices::login($body);
 
       if(isset($userService['error'])){
-         return $response::json([
-            'error'   => true, 
-            'success' => false,
-            'data'    => $userService['error']
-         ],$userService['code']);
+         return $response::json($userService['error'], $userService['code'], 'error');
       }
 
-      $response::json([
-         'error'  => false, 
-         'success'=> true,
-         'jwt'   => $userService
-      ], 200);
+      $response::json($userService, 200, 'success');
    }
 
    public function fetch(Request $request, Response $response){
-      $authorization = $request::authorization();
 
-      $userService = UserServices::fetch($authorization);
-
-      if(isset($userService['error'])){
-         return $response::json([
-            'error'   => true, 
-            'success' => false,
-            'data'    => $userService['error']
-         ],$userService['code']);
+      $authenticatedUser = Authorization::check();
+      if(isset($authenticatedUser['error'])){
+          return $response::json($authenticatedUser['error'], $authenticatedUser['code'], 'error');
       }
 
-      $response::json([
-         'error'  => false, 
-         'success'=> true,
-         'jwt'   => $userService
-      ], 200);
+      $userService = UserServices::fetch($authenticatedUser['id']);
+      if(isset($userService['error'])){
+         return $response::json($userService['error'], $userService['code'], 'error');
+      }
+
+      $response::json($userService, 200, 'success');
    }
 
    public function update(Request $request, Response $response){

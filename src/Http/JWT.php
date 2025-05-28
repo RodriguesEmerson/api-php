@@ -30,7 +30,6 @@ class JWT{
 
       if($signature !== self::signature($header, $payload)) return false;
 
-      //Fix: Está dando erro aqui, arrumaar.
       return self::base64url_decode($payload);
    }
 
@@ -43,7 +42,8 @@ class JWT{
       return rtrim(strtr(base64_encode($data), '+/', '-_'), '=');
    }
 
-   function base64url_decode($data) {
-      return base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
+   public static function base64url_decode($data) {
+      $dataDecoded = base64_decode(str_pad(strtr($data, '-_', '+/'), strlen($data) % 4, '=', STR_PAD_RIGHT));
+      return json_decode($dataDecoded, true);
    }
 }

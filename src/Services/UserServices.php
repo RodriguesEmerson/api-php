@@ -17,16 +17,15 @@ use App\Utils\DatabaseErrorMessage;
  */
 
 class UserServices{
-
    public static function create(array $data){
       try{
-         $userReopsitory = new UserRepository();
+         $userRepository = new UserRepository();
 
          $userModel = new UserCreateModel($data);
          $fields = Validator::validate($userModel->toArray());
 
          $fields['password'] =  password_hash($data['password'], PASSWORD_DEFAULT);
-         $user = $userReopsitory->save($fields);
+         $user = $userRepository->save($fields);
 
          if(!$user) return ['error' => 'We could not create your account.'];
 
@@ -41,12 +40,12 @@ class UserServices{
 
    public static function login(array $data){
       try{
-         $userReopsitory = new UserRepository();
+         $userRepository = new UserRepository();
 
          $userModel = new UserAuthModel($data);
          $fields = Validator::validate($userModel->toArray());
 
-         $user = $userReopsitory->auth($fields);
+         $user = $userRepository->auth($fields);
 
          if(!$user) return ['error' => 'Email or password is incorrect.', 'code' => 400];
 
@@ -59,18 +58,15 @@ class UserServices{
       }
    }
 
-   public static function fetch(mixed $authorization){
+   public static function fetch(string $id){
+      $userRepository = new UserRepository();
 
       try{
-         if(isset($authorization['error'])){
-            return ['error' => $authorization['error'], 'code' => 400];
-         }
+         $user = $userRepository->find($id);
 
-         $userFromJWT = JWT::verify($authorization);
+         if(!$user) return ['error' => 'User not found.', 'code' => 404];
 
-         if(!$userFromJWT) return ['error' => 'Please login to continue', 'code' => 401];
-
-         return $userFromJWT;
+         return $user;
 
       }catch(\PDOException $e){
          return  DatabaseErrorMessage::getMessageBasedOnError($e->errorInfo[0]);
