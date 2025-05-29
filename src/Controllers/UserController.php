@@ -5,7 +5,7 @@ Use App\Http\Request;
 Use App\Http\Response;
 use App\Middleware\Authorization;
 Use App\Services\UserServices;
-
+use App\Utils\Validator;
 
 /**
  * Class UserController: Contém os métodos que manupulam as requisição ao endpoint user;
@@ -34,7 +34,6 @@ class UserController{
       $body = $request::body();
 
       $userService = UserServices::login($body);
-
       if(isset($userService['error'])){
          return $response::json($userService['error'], $userService['code'], 'error');
       }
@@ -46,7 +45,7 @@ class UserController{
 
       $authenticatedUser = Authorization::check();
       if(isset($authenticatedUser['error'])){
-          return $response::json($authenticatedUser['error'], $authenticatedUser['code'], 'error');
+         return $response::json($authenticatedUser['error'], $authenticatedUser['code'], 'error');
       }
 
       $userService = UserServices::fetch($authenticatedUser['id']);
@@ -59,9 +58,34 @@ class UserController{
 
    public function update(Request $request, Response $response){
 
+      $authenticatedUser = Authorization::check();
+      if(isset($authenticatedUser['error'])){
+         return $response::json($authenticatedUser['error'], $authenticatedUser['code'], 'error');
+      }
+
+      $data = $request::body();
+      $userService = UserServices::update($data, $authenticatedUser['id']);
+
+      if(isset($userService['error'])){
+         return $response::json($userService['error'], $userService['code'], 'error');
+      }
+
+      $response::json($userService, 200, 'success');
    }
 
-   public function remove(Request $request, Response $response, array $id){
+   public function remove(Request $request, Response $response){
+      $authenticatedUser = Authorization::check();
+      if(isset($authenticatedUser['error'])){
+         return $response::json($authenticatedUser['error'], $authenticatedUser['code'], 'error');
+      }
+
+      $userService = UserServices::delete($authenticatedUser['id']);
+
+      if(isset($userService['error'])){
+         return $response::json($userService['error'], $userService['code'], 'error');
+      }
+
+      $response::json($userService, 200, 'success');
 
    }
 }

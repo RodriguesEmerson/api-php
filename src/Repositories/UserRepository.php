@@ -46,8 +46,8 @@ class UserRepository extends BaseRepository {
       if(!password_verify($data['password'], $user['password'])) return false;
 
       return [
-         'id' => $user['id'],
-         'name' => $user['name'],
+         'id'    => $user['id'],
+         'name'  => $user['name'],
          'email' => $user['email']
       ];
    }
@@ -60,7 +60,7 @@ class UserRepository extends BaseRepository {
       return $stmt->fetch(\PDO::FETCH_ASSOC);
    }
 
-   public function update(int|string $id, string $name){
+   public function update(string $name, int|string $id){
       $stmt = $this->pdo->prepare(
          'UPDATE `users` set `name` = :name WHERE `id` = :id'
       );

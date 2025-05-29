@@ -15,7 +15,7 @@ Route::post('/user/create', 'UserController@store');
 Route::post('/user/login', 'UserController@login');
 Route::get('/user/fetch', 'UserController@fetch');
 Route::put('/user/update', 'UserController@update');
-Route::delete('/user/{id}/delete', 'UserController@remove'); 
+Route::delete('/user/delete', 'UserController@remove'); 
 
 //OBS::
    //O {id} na rota /delete é apenas para fins de estudos, nunca se deve 

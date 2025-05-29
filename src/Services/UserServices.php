@@ -27,7 +27,7 @@ class UserServices{
          $fields['password'] =  password_hash($data['password'], PASSWORD_DEFAULT);
          $user = $userRepository->save($fields);
 
-         if(!$user) return ['error' => 'We could not create your account.'];
+         if(!$user) return ['error' => 'We could not create your account.', 'code' => 500];
 
          return 'User created successfully!';
 
@@ -69,9 +69,47 @@ class UserServices{
          return $user;
 
       }catch(\PDOException $e){
-         return  DatabaseErrorMessage::getMessageBasedOnError($e->errorInfo[0]);
+         return DatabaseErrorMessage::getMessageBasedOnError($e->errorInfo[0]);
       }catch(\Exception $e){
-         return ['error' => $e->getMessage(), 'code' => 500];
+         return ['error' => 'Internal server error', 'code' => 500];
       }
+   }
+
+   public static function update(array $data, string $userId){
+
+      $userRepository = new UserRepository();
+
+      try{
+         $fields = Validator::validate($data);
+
+         $wasUserCreated = $userRepository->update($fields['name'], $userId);
+
+         if(!$wasUserCreated) return ['error' => 'Sorry, it was not possible updating your data, try again.', 'code' => 500];
+
+         return 'Your data has been updated successfully';
+
+      }catch(\PDOException $e){
+         return DatabaseErrorMessage::getMessageBasedOnError($e->errorInfo[0]);
+      }catch(\Exception $e){
+         return ['error' => 'Internal server error', 'code' => 500];
+      }
+   }
+
+   public static function delete(string $userId){
+      $userRepository = new UserRepository();
+
+      try{  
+         $wasUserRemoved = $userRepository->delete($userId);
+
+         if(!$wasUserRemoved) return ['error' => 'Something went wrong, try again.', 'code' => 500];
+
+         return 'User deleted successfully';
+
+      }catch(\PDOException $e){
+         return DatabaseErrorMessage::getMessageBasedOnError($e->errorInfo[0]);
+      }catch (\Exception $e){
+         return ['error' => 'Internal server error', 'code' => 500];
+      }
+
    }
 }
