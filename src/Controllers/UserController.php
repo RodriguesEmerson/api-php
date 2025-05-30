@@ -5,7 +5,6 @@ Use App\Http\Request;
 Use App\Http\Response;
 use App\Middleware\Authorization;
 Use App\Services\UserServices;
-use App\Utils\Validator;
 
 /**
  * Class UserController: Contém os métodos que manupulam as requisição ao endpoint user;
@@ -20,7 +19,6 @@ class UserController{
    public function store(Request $request, Response $response){
       $body = $request::body();
 
-      //Userservices cuidará das regras de negócios;
       $userService = UserServices::create($body);
 
       if(isset($userService['error'])){

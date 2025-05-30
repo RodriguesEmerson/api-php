@@ -60,18 +60,20 @@ class UserRepository extends BaseRepository {
       return $stmt->fetch(\PDO::FETCH_ASSOC);
    }
 
-   public function update(string $name, int|string $id){
+   public function update(array $data){
       $stmt = $this->pdo->prepare(
          'UPDATE `users` set `name` = :name WHERE `id` = :id'
       );
-      return $stmt->execute([':id' => $id, ':name' => $name]);
+      return $stmt->execute([':id' => $data['id'], ':name' => $data['name']]);
    }
 
    public function delete(int|string $id){
       $stmt =  $this->pdo->prepare(
          'DELETE FROM `users` WHERE `id` = :id'
       );
-      return $stmt->execute([':id' => $id]);
+      $stmt->execute([':id' => $id]);
+
+      return $stmt->rowCount() === 0 ? false : true;
    }
    
 }
