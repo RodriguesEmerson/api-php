@@ -9,13 +9,13 @@ use Exception;
  */
 
 class Validators{
-   public static function checkEmptyFields(array $fields):array{
+   public static function checkEmptyFields(array $fields):array|bool{
       foreach($fields AS $field => $value){
          if(empty(trim($value))){
-            throw new Exception("The field ($field) is required.");
+            return ['message' => "The field ($field) is required."];
          }
       }
-      return $fields;
+      return false;
    }
 
    public static function validateString($string, int $min, int $max):bool{

@@ -14,4 +14,4 @@ API em PHP puro criada para fins de estudos.
 |-Cria o banco e depois crie a tabela com o modelo em `db.sql`.  
 |-Crie `.env` de acordo o medelo de `.env_model`.  
 |-Ative o Servidor e MySQL no XAMPP.  
-|-Teste.
+|-Teste. Dica(Insomnia).  

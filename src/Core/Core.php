@@ -47,7 +47,12 @@ class Core{
             // App\\Controllers\\HomeController->fetch()
             $controller = $prefixController . $controller; 
             $extendController = new $controller();
-            $extendController->$action(new Request, new Response, $matches);
+
+            try{
+               $extendController->$action(new Request, new Response, $matches);
+            }catch(\Throwable $e){
+               Response::json('Internal server error.', 500, 'error');
+            }
          }
       }
 

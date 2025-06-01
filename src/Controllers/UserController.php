@@ -5,6 +5,7 @@ Use App\Http\Request;
 Use App\Http\Response;
 use App\Middleware\Authorization;
 Use App\Services\UserServices;
+use App\Utils\Validators;
 
 /**
  * Class UserController: Contém os métodos que manupulam as requisição ao endpoint user;
@@ -17,26 +18,32 @@ Use App\Services\UserServices;
 class UserController{
    
    public function store(Request $request, Response $response){
-      $body = $request::body();
+      $data = $request::body();
 
-      $userService = UserServices::create($body);
+      $hasEmptyField = Validators::checkEmptyFields($data);
+      if($hasEmptyField) return $response::json($hasEmptyField['message'], 400, 'error');
 
-      if(isset($userService['error'])){
-        return $response::json($userService['error'], $userService['code'], 'error');
+      $serviceResponse = UserServices::create($data);
+
+      if(isset($serviceResponse['error'])){
+        return $response::json($serviceResponse['error'], $serviceResponse['code'], 'error');
       }
 
-      $response::json($userService, 200, 'success');
+      $response::json($serviceResponse, 200, 'success');
    }
 
    public function login(Request $request, Response $response){
-      $body = $request::body();
+      $data = $request::body();
 
-      $userService = UserServices::login($body);
-      if(isset($userService['error'])){
-         return $response::json($userService['error'], $userService['code'], 'error');
+      $hasEmptyField = Validators::checkEmptyFields($data);
+      if($hasEmptyField) return $response::json($hasEmptyField['message'], 400, 'error');
+
+      $serviceResponse = UserServices::login($data);
+      if(isset($serviceResponse['error'])){
+         return $response::json($serviceResponse['error'], $serviceResponse['code'], 'error');
       }
 
-      $response::json($userService, 200, 'success');
+      $response::json($serviceResponse, 200, 'success');
    }
 
    public function fetch(Request $request, Response $response){
@@ -46,12 +53,12 @@ class UserController{
          return $response::json($authenticatedUser['error'], $authenticatedUser['code'], 'error');
       }
 
-      $userService = UserServices::fetch($authenticatedUser['id']);
-      if(isset($userService['error'])){
-         return $response::json($userService['error'], $userService['code'], 'error');
+      $serviceResponse = UserServices::fetch($authenticatedUser['id']);
+      if(isset($serviceResponse['error'])){
+         return $response::json($serviceResponse['error'], $serviceResponse['code'], 'error');
       }
 
-      $response::json($userService, 200, 'success');
+      $response::json($serviceResponse, 200, 'success');
    }
 
    public function update(Request $request, Response $response){
@@ -62,13 +69,17 @@ class UserController{
       }
 
       $data = $request::body();
-      $userService = UserServices::update($data, $authenticatedUser['id']);
 
-      if(isset($userService['error'])){
-         return $response::json($userService['error'], $userService['code'], 'error');
+      $hasEmptyField = Validators::checkEmptyFields($data);
+      if($hasEmptyField) return $response::json($hasEmptyField['message'], 400, 'error');
+
+      $serviceResponse = UserServices::update($data, $authenticatedUser['id']);
+
+      if(isset($serviceResponse['error'])){
+         return $response::json($serviceResponse['error'], $serviceResponse['code'], 'error');
       }
 
-      $response::json($userService, 200, 'success');
+      $response::json($serviceResponse, 200, 'success');
    }
 
    public function remove(Request $request, Response $response){
@@ -77,13 +88,13 @@ class UserController{
          return $response::json($authenticatedUser['error'], $authenticatedUser['code'], 'error');
       }
 
-      $userService = UserServices::delete($authenticatedUser['id']);
+      $serviceResponse = UserServices::delete($authenticatedUser['id']);
 
-      if(isset($userService['error'])){
-         return $response::json($userService['error'], $userService['code'], 'error');
+      if(isset($serviceResponse['error'])){
+         return $response::json($serviceResponse['error'], $serviceResponse['code'], 'error');
       }
 
-      $response::json($userService, 200, 'success');
+      $response::json($serviceResponse, 200, 'success');
 
    }
 }

@@ -3,8 +3,10 @@
 namespace App\Http;
 
 /**
- * Request -> Resposável por pegar o método enviado na requisição -[GET, POST, PUT, DELETE];
- * @return string -> O método capturado;
+ * Request->method: Pega o método enviado na requisição -[GET, POST, PUT, DELETE];
+ * @return string O método capturado;
+ * Request->authorization: Pega o token enviado.
+ * @return array|string Retorna um erro, se o token não ter o formato correto ou não for fornecido, ou o token pré-validado.
  * 
  */
 class Request{

@@ -6,7 +6,6 @@ use App\Enums\UserAction;
 use App\Http\JWT;
 use App\Models\UserModels\UserCreateModel;
 use App\Models\UserModels\UserAuthModel;
-use App\Utils\Validator;
 use App\Repositories\UserRepository;
 use App\Utils\DatabaseErrorMessage;
 
@@ -34,9 +33,9 @@ class UserServices{
 
 
    public static function login(array $data):array|string{
-
       $data = new UserAuthModel($data);
       $data = $data->toArray();
+
       $user = self::runRepositoryAction($data, UserAction::AUTH);
       
       if(isset($user['error'])) return $user; //Exeption error
@@ -47,7 +46,6 @@ class UserServices{
 
 
    public static function fetch(string $id):array{
-      
       $user = self::runRepositoryAction($id, UserAction::FIND);
 
       if(isset($user['error'])) return $user; //Expetion error
@@ -58,7 +56,6 @@ class UserServices{
 
 
    public static function update(array $data, string $userId):array|string{
-
       $wasUserCreated = self::runRepositoryAction(['name' => $data['name'], 'id' => $userId], UserAction::UPDATE);
 
       if(isset($wasUserRemoved['error'])) return $wasUserCreated; //Expetion error
