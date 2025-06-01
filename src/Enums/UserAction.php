@@ -2,7 +2,6 @@
 
 namespace App\Enums;
 
-
 enum UserAction: string {
    case SAVE = 'save';
    case FIND = 'find';
